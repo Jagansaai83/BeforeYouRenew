@@ -19,6 +19,15 @@ Open http://127.0.0.1:8787. The loopback-only runner automatically applies migra
 
 `npm run dev` is the platform development server; without trusted identity it rejects protected APIs. Use `npm run demo` for a complete local demonstration. See SETUP_REFERENCE.md for platform-specific build details.
 
+## Watch the Product Demo
+
+[▶ Watch BeforeYouRenew – PayPal AI Hackathon 2026 Demo](https://youtu.be/jyNbsXvz37U?si=lLECOnMyM2cqYw3c)
+
+A demonstration of AI-powered renewal analysis, workflow rehearsal, plan comparison, and PayPal sandbox payment verification.
+
+The video uses a fictional merchant and sandbox transactions. No real payments are processed.
+
+
 ## Configure real external sandbox services
 
 Copy `.env.example` to `.dev.vars` locally, then fill in:
