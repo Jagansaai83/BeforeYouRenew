@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {validatePlan,demoPlan,completedCapture} from '../lib/commerce.mjs';
+const valid={items:[{id:'stand',quantity:1}],reason:'Desk ergonomics'};
+test('uses catalog prices rather than model prices',()=>assert.equal(validatePlan({...valid,items:[{id:'stand',quantity:1,cents:1}]},4000).total,3900));
+test('rejects budget bypass',()=>assert.throws(()=>validatePlan(valid,3899)));
+test('rejects unknown IDs',()=>assert.throws(()=>validatePlan({items:[{id:'attacker',quantity:1}],reason:''},10000)));
+test('rejects duplicate IDs',()=>assert.throws(()=>validatePlan({...valid,items:[...valid.items,...valid.items]},10000)));
+test('rejects negative and fractional quantities',()=>{for(const quantity of [-1,0,1.5,6])assert.throws(()=>validatePlan({...valid,items:[{id:'stand',quantity}]},100000));});
+test('rejects invalid budget',()=>{for(const b of [NaN,Infinity,1.5,100001,-100])assert.throws(()=>validatePlan(valid,b));});
+test('sample plan never exceeds valid budget',()=>{for(let b=3900;b<=100000;b+=101)assert.ok(demoPlan('workspace',b).total<=b);});
+test('does not accept empty model selection',()=>assert.throws(()=>validatePlan({items:[],reason:'none'},10000)));
+test('capture requires completed status and exact currency and amount',()=>{const order={status:'COMPLETED',purchase_units:[{payments:{captures:[{status:'COMPLETED',amount:{currency_code:'USD',value:'39.00'}}]}}]};assert.ok(completedCapture(order,3900));assert.equal(completedCapture(order,4000),false);order.purchase_units[0].payments.captures[0].amount.currency_code='EUR';assert.equal(completedCapture(order,3900),false);});
+test('pending capture is not success',()=>assert.equal(completedCapture({status:'APPROVED'},3900),false));
